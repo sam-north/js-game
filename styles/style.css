@@ -1,18 +1,15 @@
 :root {
   height: 100%;
   line-height: 0;
-  background-color: red;
 }
 
 body{
   margin:0;
   height: 100%;
-  background-color: purple;
 }
 
 canvas {
-  background-color: rgb(214, 255, 187);
+  background-color:rgb(110 128 137);
   height: 100%;
   width: 100%;
-  image-rendering: pixelated;
 }
