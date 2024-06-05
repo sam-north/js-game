@@ -102,3 +102,5 @@ function drawPlayer(x, y, width, height, color, faceColor, direction, context) {
   let faceHeight = height / 4;
   ctx.fillRect(direction === 1 ? x + (width / 2) : x, y + height - faceHeight - (faceHeight / 2), faceWidth, faceHeight);
 }
+
+var test = 5;
