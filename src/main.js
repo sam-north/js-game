@@ -10,16 +10,17 @@ const canvas = document.querySelector('canvas#app');
 canvas.width = screenWidth * scale;
 canvas.height = screenHeight * scale;
 const ctx = canvas.getContext("2d");
-ctx.scale(scale, scale);
+ctx.transform(scale, 0, 0, -scale, 0, canvas.height);
 
 drawPlayer(50, 100, 100, 100, primaryColor, '#fff');
 drawSquare(canvas.width * .7, canvas.height * .4, 150, 150, secondaryColor);
 drawPlayer(canvas.width * .4, canvas.height * .8, 50, 50, '#fff', '#000', -1);
 drawCircle(500, 500, 50, 'maroon');
-drawLogo(500, 50, "/assets/favicon.svg");
+drawImage(600,100, "/assets/favicon.svg");
 
 drawBoundaries();
-doSomeVirtualCanvasLayering();
+// doSomeVirtualCanvasLayering();
+
 
 function doSomeVirtualCanvasLayering() {
   // virtual canvas for layer
@@ -40,14 +41,19 @@ function drawBoundaries() {
   drawSquare(screenWidth - labelRectWidth, screenHeight - labelRectHeight, labelRectWidth, labelRectHeight, 'yellow');
   drawText(0, 0, `Corner 1: {0,0}`, null, null, primaryColor);
   drawText(screenWidth - 175, 0, `Corner 2: {${canvas.width}, 0}`, null, null, primaryColor);
-  drawText(0, screenHeight - 25, `Corner 3: {0,${canvas.height}}`, null, null, primaryColor);
-  drawText(screenWidth - 175, screenHeight - 25, `Corner 3: {${canvas.width},${canvas.height}}`, null, null, primaryColor);
+  drawText(0, screenHeight, `Corner 3: {0,${canvas.height}}`, null, null, primaryColor);
+  drawText(screenWidth - 175, screenHeight, `Corner 3: {${canvas.width},${canvas.height}}`, null, null, primaryColor);
 }
 
-function drawLogo(x, y, src) {
+function drawImage(x, y, src, context) {
+  if (!context) context = ctx;
   var myImg = new Image();
   myImg.onload = function () {
-    ctx.drawImage(myImg, x, y);
+    context.save();
+    context.transform(scale, 0, 0, -scale, 0, canvas.height);
+    let translatedY = +y + +myImg.height;
+    context.drawImage(myImg, x, (canvas.height - translatedY));
+    context.restore();
   };
   myImg.src = src;
 }
@@ -64,9 +70,10 @@ function drawText(x, y, text, fontSize, fontFamily, color, context) {
   if (!color) color = '#fff';
   if (!context) context = ctx;
 
+  context.textBaseline = y >= canvas.height / 2 ? 'bottom' : 'top';
   context.fillStyle = color;
   context.font = `${fontSize}px ${fontFamily}`;
-  context.fillText(text, x, y + +fontSize);
+  context.fillText(text, x, y);
 }
 
 function drawCircle(x, y, radius, color, context) {
@@ -91,5 +98,7 @@ function drawPlayer(x, y, width, height, color, faceColor, direction, context) {
 
   drawSquare(x, y, width, height, color);
   ctx.fillStyle = faceColor;
-  ctx.fillRect(direction === 1 ? x + (width / 2) : x, y + (height / 8), width / 2, height / 4);
+  let faceWidth = width / 2;
+  let faceHeight = height / 4;
+  ctx.fillRect(direction === 1 ? x + (width / 2) : x, y + height - faceHeight - (faceHeight / 2), faceWidth, faceHeight);
 }
